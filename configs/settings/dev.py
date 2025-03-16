@@ -20,6 +20,14 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',  # استفاده از SQLite
+#         'NAME': BASE_DIR / "db.sqlite3",  # مسیر فایل دیتابیس SQLite
+#     }
+# }
+
+
 connect(
     db="configs",
     host="mongodb://localhost:27017/configs"
