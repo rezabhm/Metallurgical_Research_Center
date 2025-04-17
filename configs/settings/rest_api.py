@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from corsheaders.defaults import default_headers
 
 # Rest Framework
 
@@ -21,6 +22,27 @@ SIMPLE_JWT = {
 
 }
 
-# Cors Config
-CORS_ALLOW_ALL_ORIGINS = True
+# ================== CORS HEADERS ==================
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+
+    "http://localhost:3001",
+
+]
+
+# فقط در حالت توسعه فعال باشه
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+]
+
+# ================== CSRF ==================
+CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3001",
+]
+
+# ================== SESSION / COOKIE CONFIG ==================
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'

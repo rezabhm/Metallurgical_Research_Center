@@ -158,6 +158,8 @@
 #         except TokenError:
 #             return Response({'error': 'Invalid or expired refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
 #
+import pprint
+
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
@@ -215,6 +217,7 @@ class OTPVerifyCodeAPIView(GenericAPIView):
     serializer_class = OTPVerifyCodeSerializers
 
     def post(self, request, **kwargs):
+        print('verify code : ', request.data.get('code'))
         """
         تایید کد OTP و ارسال توکن دسترسی (Access Token) در صورت تایید موفقیت‌آمیز
         """
@@ -247,17 +250,17 @@ class OTPVerifyCodeAPIView(GenericAPIView):
                     key='access_token',
                     value=str(access),
                     httponly=True,
-                    secure=True,  # فقط در حالت HTTPS فعال باشد
-                    samesite='Lax',  # یا 'Strict' / 'None' بسته به نیاز
-                    max_age=60 * 60 * 24  # مدت زمان اعتبار توکن (1 روز)
+                    secure=False,  # فقط در حالت HTTPS فعال باشد
+                    samesite='none',  # یا 'Strict' / 'None' بسته به نیاز
+                    max_age=60 * 60 * 24*30 # مدت زمان اعتبار توکن (1 روز)
                 )
 
                 response.set_cookie(
                     key='refresh_token',
                     value=str(refresh),
                     httponly=True,
-                    secure=True,
-                    samesite='Lax',
+                    secure=False,
+                    samesite='none',
                     max_age=60 * 60 * 24 * 30  # مدت زمان اعتبار توکن refresh (30 روز)
                 )
                 return response
@@ -306,6 +309,8 @@ class RefreshTokenCookieAPIView(APIView):
         """
         # دریافت توکن refresh از کوکی‌ها
         refresh_token = request.COOKIES.get('refresh_token')
+        print('refresh token : ', refresh_token)
+        pprint.pprint(request.COOKIES)
 
         if not refresh_token:
             return Response({'error': 'توکن refresh در کوکی‌ها پیدا نشد'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -333,18 +338,20 @@ class RefreshTokenCookieAPIView(APIView):
                 key='access_token',
                 value=str(new_access),
                 httponly=True,
-                secure=True,
-                samesite='Lax',
-                max_age=60 * 60 * 24  # 1 روز
+                secure=False,
+                samesite='None',
+                max_age=60 * 60 * 24,  # 1 روز
+                path='/'
             )
 
             response.set_cookie(
                 key='refresh_token',
                 value=str(new_refresh),
                 httponly=True,
-                secure=True,
-                samesite='Lax',
-                max_age=60 * 60 * 24 * 30  # 30 روز
+                secure=False,
+                samesite='None',
+                max_age=60 * 60 * 24 * 30,  # 30 روز
+                path='/'
             )
 
             return response

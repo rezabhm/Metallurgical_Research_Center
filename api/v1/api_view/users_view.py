@@ -45,6 +45,7 @@
 #     def get_queryset(self):
 #
 #         return CustomUser.objects.filter(phone_number=self.request.user)
+import pprint
 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
@@ -132,7 +133,6 @@ class UserAdminAPIView(
         return super().destroy(request, *args, **kwargs)
 
 
-
 class UserCustomerAPIView(
             GenericViewSet,
             mixins.CreateModelMixin,
@@ -155,6 +155,7 @@ class UserCustomerAPIView(
     lookup_field = 'phone_number'
 
     def get_queryset(self):
+        pprint.pprint(self.request.COOKIES)
         return CustomUser.objects.filter(phone_number=self.request.user)
 
     @swagger_auto_schema(
