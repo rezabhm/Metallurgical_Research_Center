@@ -26,8 +26,8 @@ router.register('service/reserve-date/customer', ServiceReserveDateAnyAPIView, b
 
 """ Blog API """
 router.register('blog/category/admin', CategoryAPIView, basename='admin-category')
-router.register('blog/b/admin', BlogAPiView, basename='admin-blog')
-router.register('blog/content/admin', BlogContentAPiView, basename='admin-blog-content')
+router.register('blog/b/admin', BlogAPIView, basename='admin-blog')
+router.register('blog/content/admin', BlogContentAPIView, basename='admin-blog-content')
 router.register('blog/image/admin', BlogImageAPiView, basename='admin-blog-image')
 router.register('blog/b/any', BlogReadAPiView, basename='blog-any')
 router.register('blog/c/any', CategoryReadAPIView, basename='category-any')
@@ -37,6 +37,10 @@ urlpatterns += [
 
     path(r'authentication/otp/send-code/<str:phone_number>/', OTPSendCodeAPIView.as_view(), name='otp-send-code'),
     path(r'authentication/otp/verify-code/<str:phone_number>/', OTPVerifyCodeAPIView.as_view(), name='otp-verify-code'),
+
+    path(r'authentication/refresh-token/', RefreshTokenCookieAPIView.as_view(), name='authentication-refresh-token'),
+    path(r'authentication/logout/', LogoutAPIView.as_view(), name='authentication-logout'),
+
     path(r'reserve', ReserveAPIView.as_view(), name='reserve'),
 
     path("graphql/blogs", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),

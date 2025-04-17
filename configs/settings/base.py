@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'corsheaders',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
     'drf_yasg',
     "graphene_django",
