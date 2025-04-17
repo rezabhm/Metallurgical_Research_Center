@@ -303,13 +303,12 @@ class RefreshTokenCookieAPIView(APIView):
     اگر توکن refresh منقضی نشده باشد، توکن جدید برای کاربر صادر می‌شود.
     """
 
-    def post(self, request):
+    def get(self, request):
         """
         بروزرسانی توکن‌های دسترسی و refresh
         """
         # دریافت توکن refresh از کوکی‌ها
         refresh_token = request.COOKIES.get('refresh_token')
-        print('refresh token : ', refresh_token)
         pprint.pprint(request.COOKIES)
 
         if not refresh_token:
