@@ -166,6 +166,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+from apps.users.models import CustomUser
 from apps.users.serializers import OTPVerifyCodeSerializers
 from apps.users.service import check_user_exist, create_user
 from utils.sms import send_password_code_sms
@@ -217,7 +218,6 @@ class OTPVerifyCodeAPIView(GenericAPIView):
     serializer_class = OTPVerifyCodeSerializers
 
     def post(self, request, **kwargs):
-        print('verify code : ', request.data.get('code'))
         """
         تایید کد OTP و ارسال توکن دسترسی (Access Token) در صورت تایید موفقیت‌آمیز
         """
@@ -309,7 +309,6 @@ class RefreshTokenCookieAPIView(APIView):
         """
         # دریافت توکن refresh از کوکی‌ها
         refresh_token = request.COOKIES.get('refresh_token')
-        pprint.pprint(request.COOKIES)
 
         if not refresh_token:
             return Response({'error': 'توکن refresh در کوکی‌ها پیدا نشد'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -326,7 +325,8 @@ class RefreshTokenCookieAPIView(APIView):
                 pass
 
             # ایجاد توکن جدید
-            new_refresh = RefreshToken.for_user(refresh.user)
+            usr = CustomUser.objects.get(id=refresh['user_id'])
+            new_refresh = RefreshToken.for_user(usr)
             new_access = new_refresh.access_token
 
             # ساخت پاسخ
@@ -338,8 +338,8 @@ class RefreshTokenCookieAPIView(APIView):
                 value=str(new_access),
                 httponly=True,
                 secure=False,
-                samesite='None',
-                max_age=60 * 60 * 24,  # 1 روز
+                samesite='Lax',
+                max_age=1000 * 60 * 60 * 24,  # 1 روز
                 path='/'
             )
 
@@ -348,8 +348,8 @@ class RefreshTokenCookieAPIView(APIView):
                 value=str(new_refresh),
                 httponly=True,
                 secure=False,
-                samesite='None',
-                max_age=60 * 60 * 24 * 30,  # 30 روز
+                samesite='Lax',
+                max_age=1000 * 60 * 60 * 24 * 30,  # 30 روز
                 path='/'
             )
 
