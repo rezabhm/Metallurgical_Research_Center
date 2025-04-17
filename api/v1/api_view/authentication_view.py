@@ -250,8 +250,8 @@ class OTPVerifyCodeAPIView(GenericAPIView):
                     key='access_token',
                     value=str(access),
                     httponly=True,
-                    secure=False,  # فقط در حالت HTTPS فعال باشد
-                    samesite='none',  # یا 'Strict' / 'None' بسته به نیاز
+                    secure=True,  # فقط در حالت HTTPS فعال باشد
+                    samesite='Lax',  # یا 'Strict' / 'None' بسته به نیاز
                     max_age=60 * 60 * 24*30 # مدت زمان اعتبار توکن (1 روز)
                 )
 
@@ -259,8 +259,8 @@ class OTPVerifyCodeAPIView(GenericAPIView):
                     key='refresh_token',
                     value=str(refresh),
                     httponly=True,
-                    secure=False,
-                    samesite='none',
+                    secure=True,
+                    samesite='Lax',
                     max_age=60 * 60 * 24 * 30  # مدت زمان اعتبار توکن refresh (30 روز)
                 )
                 return response
