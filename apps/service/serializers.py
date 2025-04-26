@@ -10,15 +10,14 @@ class ServiceSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-
         representation = super().to_representation(instance)
 
-        service_image_serializers = ServiceImageSerializers(data=ServiceImage.objects.filter(service__id=representation['pk']), many=True)
-        service_image_serializers.is_valid()
+        service_images = ServiceImage.objects.filter(service=instance)
+        service_image_serializers = ServiceImageSerializers(service_images, many=True)
         representation['service-images'] = service_image_serializers.data
 
-        service_reserve_date_serializers = ServiceReserveDateSerializers(data=ServiceReservedDate.objects.filter(service__id=representation['pk']), many=True)
-        service_reserve_date_serializers.is_valid()
+        reserve_dates = ServiceReservedDate.objects.filter(service=instance)
+        service_reserve_date_serializers = ServiceReserveDateSerializers(reserve_dates, many=True)
         representation['service-reserve_date'] = service_reserve_date_serializers.data
 
         return representation
