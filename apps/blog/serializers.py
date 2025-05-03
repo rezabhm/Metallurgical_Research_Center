@@ -65,6 +65,7 @@ class BlogContentSerializers(serializers.Serializer):
 
 class BlogImageSerializers(serializers.Serializer):
 
+    id = serializers.UUIDField(read_only=True)
     image = serializers.CharField()
     blog = serializers.UUIDField()
 

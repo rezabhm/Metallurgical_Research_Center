@@ -4,7 +4,6 @@ from django.utils.text import slugify
 
 # mongo documents
 class Category(mongo.Document):
-
     category_name = mongo.StringField(required=True)
     slug = mongo.StringField(unique=True)
 

@@ -5,6 +5,7 @@ from apps.reserve.document import ServiceReserve
 
 class ServiceReserveSerializers(serializers.Serializer):
 
+    id = serializers.UUIDField(read_only=True)
     stage = serializers.IntegerField()
     is_canceled = serializers.BooleanField()
     user = serializers.CharField()

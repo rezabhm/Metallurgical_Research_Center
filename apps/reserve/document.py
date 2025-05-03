@@ -32,7 +32,7 @@ class ServiceReserve(mongo.Document):
     # stage 1
     reserve_from = mongo.StringField(default='')
     reserve_to = mongo.StringField(default='')
-    service = mongo.StringField(required=True)
+    service = mongo.StringField(default='')
 
     # stage 2
     is_reservation_time_verified = mongo.BooleanField(default=False)

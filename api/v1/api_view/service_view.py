@@ -184,6 +184,7 @@ class ServiceAdminAPIView(
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
+
 # API برای مشاهده خدمات برای عموم
 class ServiceAnyAPIView(
         GenericViewSet,
@@ -199,7 +200,7 @@ class ServiceAnyAPIView(
     - هیچ پارامتر ورودی در متدهای این API لازم نیست.
     """
     permission_classes = [AllowAny]
-    authentication_classes = [HTTPOnlyCookieJWTAuthentication]
+    authentication_classes = []
     queryset = Service.objects.all()
     serializer_class = ServiceSerializers
 
@@ -221,6 +222,7 @@ class ServiceAnyAPIView(
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
 
 # API برای مدیریت تصاویر خدمات توسط ادمین
 class ServiceImageAdminAPIView(
@@ -310,7 +312,7 @@ class ServiceImageAnyAPIView(
     - هیچ پارامتر ورودی در متدهای این API لازم نیست.
     """
     permission_classes = [AllowAny]
-    authentication_classes = [HTTPOnlyCookieJWTAuthentication]
+    authentication_classes = []
     queryset = ServiceImage.objects.all()
     serializer_class = ServiceImageSerializers
 
@@ -422,7 +424,7 @@ class ServiceReserveDateAnyAPIView(
     - هیچ پارامتر ورودی در متدهای این API لازم نیست.
     """
     permission_classes = [AllowAny]
-    authentication_classes = [HTTPOnlyCookieJWTAuthentication]
+    authentication_classes = []
     queryset = ServiceReservedDate.objects.all()
     serializer_class = ServiceReserveDateSerializers
 
