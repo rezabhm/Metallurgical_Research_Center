@@ -25,6 +25,11 @@ class CategorySerializers(serializers.Serializer):
 
         return representation
 
+    def create(self, validated_data):
+        category = Category(**validated_data)
+        category.save()
+        return category
+
 
 class BlogSerializers(serializers.Serializer):
 
@@ -52,6 +57,11 @@ class BlogSerializers(serializers.Serializer):
 
         return representation
 
+    def create(self, validated_data):
+        x = Blog(**validated_data)
+        x.save()
+        return x
+
 
 class BlogContentSerializers(serializers.Serializer):
 
@@ -61,6 +71,11 @@ class BlogContentSerializers(serializers.Serializer):
     class_name = serializers.CharField()
     is_multiline = serializers.BooleanField()
     blog = serializers.UUIDField()
+
+    def create(self, validated_data):
+        x = BlogContent(**validated_data)
+        x.save()
+        return x
 
 
 class BlogImageSerializers(serializers.Serializer):
