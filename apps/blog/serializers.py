@@ -30,6 +30,12 @@ class CategorySerializers(serializers.Serializer):
         category.save()
         return category
 
+    def update(self, instance, validated_data):
+        instance.category_name = validated_data.get('category_name', instance.category_name)
+        instance.slug = validated_data.get('slug', instance.slug)
+        instance.save()
+        return instance
+
 
 class BlogSerializers(serializers.Serializer):
 
@@ -62,6 +68,15 @@ class BlogSerializers(serializers.Serializer):
         x.save()
         return x
 
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.cover_image = validated_data.get('cover_image', instance.cover_image)
+        instance.category_list = validated_data.get('category_list', instance.category_list)
+        instance.tags = validated_data.get('tags', instance.tags)
+        instance.slug = validated_data.get('slug', instance.slug)
+        instance.save()
+        return instance
+
 
 class BlogContentSerializers(serializers.Serializer):
 
@@ -76,6 +91,15 @@ class BlogContentSerializers(serializers.Serializer):
         x = BlogContent(**validated_data)
         x.save()
         return x
+
+    def update(self, instance, validated_data):
+        instance.index = validated_data.get('index', instance.index)
+        instance.content = validated_data.get('content', instance.content)
+        instance.class_name = validated_data.get('class_name', instance.class_name)
+        instance.is_multiline = validated_data.get('is_multiline', instance.is_multiline)
+        instance.blog = validated_data.get('blog', instance.blog)
+        instance.save()
+        return instance
 
 
 class BlogImageSerializers(serializers.Serializer):
@@ -107,3 +131,9 @@ class BlogImageSerializers(serializers.Serializer):
         blog_image.save()
 
         return blog_image
+
+    def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
+        instance.blog = validated_data.get('blog', instance.blog)
+        instance.save()
+        return instance
