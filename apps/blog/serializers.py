@@ -10,7 +10,7 @@ from apps.blog.document import *
 
 class CategorySerializers(serializers.Serializer):
 
-    id = serializers.UUIDField()
+    id = serializers.UUIDField(read_only=True)
     category_name = serializers.CharField()
     slug = serializers.CharField()
 
@@ -28,7 +28,7 @@ class CategorySerializers(serializers.Serializer):
 
 class BlogSerializers(serializers.Serializer):
 
-    id = serializers.UUIDField()
+    id = serializers.UUIDField(read_only=True)
     title = serializers.CharField()
     cover_image = serializers.CharField()
     category_list = serializers.ListField()
@@ -55,7 +55,7 @@ class BlogSerializers(serializers.Serializer):
 
 class BlogContentSerializers(serializers.Serializer):
 
-    id = serializers.UUIDField()
+    id = serializers.UUIDField(read_only=True)
     index = serializers.IntegerField()
     content = serializers.CharField()
     class_name = serializers.CharField()
