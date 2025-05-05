@@ -47,6 +47,7 @@
 #         return CustomUser.objects.filter(phone_number=self.request.user)
 import pprint
 
+from django.utils.decorators import method_decorator
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins
@@ -58,7 +59,42 @@ from apps.users.models import CustomUser
 from apps.users.serializers import UserSerializers
 from configs.authentication import HTTPOnlyCookieJWTAuthentication
 
-
+@method_decorator(name='list', decorator=swagger_auto_schema(
+        operation_summary="لیست تمام کاربران",
+        operation_description="این متد تمام کاربران موجود را لیست می‌کند.",
+        responses={200: UserSerializers(many=True)}
+    ))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(
+        operation_summary="دریافت اطلاعات کاربر",
+        operation_description="این متد اطلاعات کاربری با شماره تلفن مشخص شده را باز می‌گرداند.",
+        responses={200: UserSerializers()},
+        manual_parameters=[
+            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
+        ]
+    ))
+@method_decorator(name='create', decorator=swagger_auto_schema(
+        operation_summary="ایجاد کاربر جدید",
+        operation_description="این متد یک کاربر جدید ایجاد می‌کند.",
+        request_body=UserSerializers,
+        responses={201: UserSerializers()}
+    ))
+@method_decorator(name='update', decorator=swagger_auto_schema(
+        operation_summary="به‌روزرسانی اطلاعات کاربر",
+        operation_description="این متد اطلاعات کاربری موجود را به‌روزرسانی می‌کند.",
+        request_body=UserSerializers,
+        responses={200: UserSerializers()},
+        manual_parameters=[
+            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
+        ]
+    ))
+@method_decorator(name='destroy', decorator=swagger_auto_schema(
+        operation_summary="حذف کاربر",
+        operation_description="این متد یک کاربر را بر اساس شماره تلفن حذف می‌کند.",
+        responses={204: 'حذف موفقیت‌آمیز'},
+        manual_parameters=[
+            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
+        ]
+    ))
 class UserAdminAPIView(
             GenericViewSet,
             mixins.CreateModelMixin,
@@ -81,58 +117,46 @@ class UserAdminAPIView(
     serializer_class = UserSerializers
     lookup_field = 'phone_number'
 
-    @swagger_auto_schema(
-        operation_summary="لیست تمام کاربران",
-        operation_description="این متد تمام کاربران موجود را لیست می‌کند.",
-        responses={200: UserSerializers(many=True)}
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    def get_queryset(self):
+        return CustomUser.objects.all()
 
-    @swagger_auto_schema(
-        operation_summary="دریافت اطلاعات کاربر",
-        operation_description="این متد اطلاعات کاربری با شماره تلفن مشخص شده را باز می‌گرداند.",
+
+@method_decorator(name='list', decorator=swagger_auto_schema(
+        operation_summary="مشاهده حساب کاربری",
+        operation_description="این متد اطلاعات پروفایل کاربر لاگین‌شده را برمی‌گرداند.",
+        responses={200: UserSerializers()}
+    ))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(
+        operation_summary="دریافت اطلاعات حساب کاربری",
+        operation_description="این متد اطلاعات کاربری لاگین‌شده را بر اساس شماره تلفن برمی‌گرداند.",
         responses={200: UserSerializers()},
         manual_parameters=[
             openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
         ]
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="ایجاد کاربر جدید",
-        operation_description="این متد یک کاربر جدید ایجاد می‌کند.",
+    ))
+@method_decorator(name='create', decorator=swagger_auto_schema(
+        operation_summary="ایجاد حساب کاربری",
+        operation_description="این متد امکان ثبت اطلاعات جدید برای کاربر لاگین‌شده را فراهم می‌کند.",
         request_body=UserSerializers,
         responses={201: UserSerializers()}
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="به‌روزرسانی اطلاعات کاربر",
-        operation_description="این متد اطلاعات کاربری موجود را به‌روزرسانی می‌کند.",
+    ))
+@method_decorator(name='update', decorator=swagger_auto_schema(
+        operation_summary="به‌روزرسانی اطلاعات حساب کاربری",
+        operation_description="این متد اطلاعات پروفایل کاربر لاگین‌شده را به‌روزرسانی می‌کند.",
         request_body=UserSerializers,
         responses={200: UserSerializers()},
         manual_parameters=[
             openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
         ]
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="حذف کاربر",
-        operation_description="این متد یک کاربر را بر اساس شماره تلفن حذف می‌کند.",
+    ))
+@method_decorator(name='destroy', decorator=swagger_auto_schema(
+        operation_summary="حذف حساب کاربری",
+        operation_description="این متد پروفایل کاربری لاگین‌شده را حذف می‌کند.",
         responses={204: 'حذف موفقیت‌آمیز'},
         manual_parameters=[
             openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
         ]
-    )
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-
+    ))
 class UserCustomerAPIView(
             GenericViewSet,
             mixins.CreateModelMixin,
@@ -155,58 +179,5 @@ class UserCustomerAPIView(
     lookup_field = 'phone_number'
 
     def get_queryset(self):
-        pprint.pprint(self.request.COOKIES)
         return CustomUser.objects.filter(phone_number=self.request.user)
-
-    @swagger_auto_schema(
-        operation_summary="مشاهده حساب کاربری",
-        operation_description="این متد اطلاعات پروفایل کاربر لاگین‌شده را برمی‌گرداند.",
-        responses={200: UserSerializers()}
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="دریافت اطلاعات حساب کاربری",
-        operation_description="این متد اطلاعات کاربری لاگین‌شده را بر اساس شماره تلفن برمی‌گرداند.",
-        responses={200: UserSerializers()},
-        manual_parameters=[
-            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
-        ]
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="ایجاد حساب کاربری",
-        operation_description="این متد امکان ثبت اطلاعات جدید برای کاربر لاگین‌شده را فراهم می‌کند.",
-        request_body=UserSerializers,
-        responses={201: UserSerializers()}
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="به‌روزرسانی اطلاعات حساب کاربری",
-        operation_description="این متد اطلاعات پروفایل کاربر لاگین‌شده را به‌روزرسانی می‌کند.",
-        request_body=UserSerializers,
-        responses={200: UserSerializers()},
-        manual_parameters=[
-            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
-        ]
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @swagger_auto_schema(
-        operation_summary="حذف حساب کاربری",
-        operation_description="این متد پروفایل کاربری لاگین‌شده را حذف می‌کند.",
-        responses={204: 'حذف موفقیت‌آمیز'},
-        manual_parameters=[
-            openapi.Parameter('phone_number', openapi.IN_PATH, description="شماره تلفن کاربر", type=openapi.TYPE_STRING)
-        ]
-    )
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
 

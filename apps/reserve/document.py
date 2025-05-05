@@ -8,11 +8,11 @@ from django.core.files.storage import default_storage
 def check_validated_data(stage, validated_data):
     stage_key_handler = {
 
-        '1', ['reserve_from', 'reserve_to', 'service'],
-        '2', ['is_reservation_time_verified', 'admin_description', 'reserve_duration', 'total_price'],
-        '3', ['payment_image'],
-        '4', ['is_payment_verified'],
-        '5', ['is_finished'],
+        '1': ['reserve_from', 'reserve_to', 'service'],
+        '2': ['is_reservation_time_verified', 'admin_description', 'reserve_duration', 'total_price'],
+        '3': ['payment_image'],
+        '4': ['is_payment_verified'],
+        '5': ['is_finished'],
 
     }
 
