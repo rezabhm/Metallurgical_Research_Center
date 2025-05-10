@@ -16,7 +16,7 @@ def check_validated_data(stage, validated_data):
 
     }
 
-    if validated_data.keys() not in stage_key_handler[str(stage)]:
+    if list(validated_data.keys()) != stage_key_handler[str(stage)]:
         return False, {'message': f'you didnt send keys > {stage_key_handler[str(stage)]}'}
 
     return True, {}
@@ -116,6 +116,8 @@ class ServiceReserve(mongo.Document):
         # ذخیره مسیر فایل در فیلد payment_image
         self.payment_image = file_path
 
+        validated_data['payment_image'] = file_path
+
         # ذخیره تغییرات در مدل
         self.save()
 
@@ -141,7 +143,6 @@ class ServiceReserve(mongo.Document):
         return True, validated_data
 
     def pre_stage_2(self, validated_data):
-
         self.reserve_from = ''
         self.reserve_to = ''
         self.service = validated_data['service']
@@ -156,7 +157,6 @@ class ServiceReserve(mongo.Document):
         return True, validated_data
 
     def pre_stage_3(self, validated_data):
-
         self.payment_image = ''
         self.stage = 1
         self.is_reservation_time_verified = False
@@ -169,7 +169,6 @@ class ServiceReserve(mongo.Document):
         return True, validated_data
 
     def pre_stage_4(self, validated_data):
-
         self.admin_description = validated_data['admin_description']
         self.payment_image = ''
         self.is_payment_verified = False
