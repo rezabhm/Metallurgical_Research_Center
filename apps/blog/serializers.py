@@ -64,6 +64,25 @@ class BlogSerializers(serializers.Serializer):
         return representation
 
     def create(self, validated_data):
+
+        # گرفتن تصویر از validated_data
+        image = validated_data.pop('cover_image')
+
+        # ذخیره تصویر
+        file_name = f"{now().strftime('%Y%m%d%H%M%S')}_{image.name}"  # برای ایجاد نام منحصر به فرد
+        file_path = os.path.join(settings.MEDIA_ROOT, 'cover_image', file_name)
+
+        # ذخیره تصویر در سیستم فایل
+        with default_storage.open(file_path, 'wb') as f:
+            for chunk in image.chunks():
+                f.write(chunk)
+
+        # ساخت URL تصویر
+        image_url = os.path.join(settings.MEDIA_URL, 'cover_image', file_name)
+
+        # مسیر URL تصویر را در validated_data اضافه می‌کنیم
+        validated_data['cover_image'] = image_url
+
         x = Blog(**validated_data)
         x.save()
         return x
@@ -110,7 +129,7 @@ class BlogImageSerializers(serializers.Serializer):
 
     def create(self, validated_data):
         # گرفتن تصویر از validated_data
-        image = validated_data.pop('cover_image')
+        image = validated_data.pop('image')
 
         # ذخیره تصویر
         file_name = f"{now().strftime('%Y%m%d%H%M%S')}_{image.name}"  # برای ایجاد نام منحصر به فرد
@@ -125,7 +144,7 @@ class BlogImageSerializers(serializers.Serializer):
         image_url = os.path.join(settings.MEDIA_URL, 'blog_images', file_name)
 
         # مسیر URL تصویر را در validated_data اضافه می‌کنیم
-        validated_data['cover_image'] = image_url
+        validated_data['image'] = image_url
 
         blog_image = BlogImage(**validated_data)
         blog_image.save()
