@@ -50,6 +50,11 @@ class BlogSerializers(serializers.Serializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        # ✅ تبدیل category_list از DBRef به id یا نام
+        if hasattr(instance, 'category_list') and instance.category_list:
+            representation['category_list'] = [
+                str(category.id) for category in instance.category_list
+            ]
 
         blog_images = BlogImage.objects(blog=representation['id'])
         blog_images_serializers = BlogImageSerializers(data=blog_images, many=True)
@@ -83,6 +88,18 @@ class BlogSerializers(serializers.Serializer):
         return x
 
     def update(self, instance, validated_data):
+        if 'cover_image' in validated_data:
+            # گرفتن تصویر از validated_data
+            image = validated_data.get('cover_image', instance.cover_image)
+
+            # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
+            file_name = f'cover_image/{str(random.randint(0,100000))}-{os.path.basename(image.name)}'
+
+            # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
+            file_path = default_storage.save(file_name, ContentFile(image.read()))
+
+            validated_data['cover_image'] = file_path
+
         instance.title = validated_data.get('title', instance.title)
         instance.cover_image = validated_data.get('cover_image', instance.cover_image)
         instance.category_list = validated_data.get('category_list', instance.category_list)
