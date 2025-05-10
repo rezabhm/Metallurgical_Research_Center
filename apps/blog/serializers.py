@@ -41,7 +41,7 @@ class BlogSerializers(serializers.Serializer):
 
     id = serializers.UUIDField(read_only=True)
     title = serializers.CharField()
-    cover_image = serializers.CharField()
+    cover_image = serializers.ImageField()
     category_list = serializers.ListField()
     tags = serializers.ListField()
     slug = serializers.CharField()
