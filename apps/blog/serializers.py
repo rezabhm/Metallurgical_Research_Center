@@ -119,27 +119,20 @@ class BlogContentSerializers(serializers.Serializer):
 class BlogImageSerializers(serializers.Serializer):
 
     id = serializers.UUIDField(read_only=True)
-    image = serializers.CharField()
+    image = serializers.ImageField()
     blog = serializers.UUIDField()
 
     def create(self, validated_data):
         # گرفتن تصویر از validated_data
         image = validated_data.pop('image')
 
-        # ذخیره تصویر
-        file_name = f"{now().strftime('%Y%m%d%H%M%S')}_{image.name}"  # برای ایجاد نام منحصر به فرد
-        file_path = os.path.join(settings.MEDIA_ROOT, 'blog_images', file_name)
+        # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
+        file_name = f'blog_images/{str(random.randint(0,100000))}-{os.path.basename(image.name)}'
 
-        # ذخیره تصویر در سیستم فایل
-        with default_storage.open(file_path, 'wb') as f:
-            for chunk in image.chunks():
-                f.write(chunk)
+        # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
+        file_path = default_storage.save(file_name, ContentFile(image.read()))
 
-        # ساخت URL تصویر
-        image_url = os.path.join(settings.MEDIA_URL, 'blog_images', file_name)
-
-        # مسیر URL تصویر را در validated_data اضافه می‌کنیم
-        validated_data['image'] = image_url
+        validated_data['image'] = file_path
 
         blog_image = BlogImage(**validated_data)
         blog_image.save()
