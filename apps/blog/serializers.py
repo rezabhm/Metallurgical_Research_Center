@@ -1,4 +1,5 @@
 import os
+import random
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -70,7 +71,7 @@ class BlogSerializers(serializers.Serializer):
         image = validated_data.pop('cover_image')
 
         # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
-        file_name = f'cover_image/{self.id}_{os.path.basename(image.name)}'
+        file_name = f'cover_image/{str(random.randint(0,100000))}-{os.path.basename(image.name)}'
 
         # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
         file_path = default_storage.save(file_name, ContentFile(image.read()))
