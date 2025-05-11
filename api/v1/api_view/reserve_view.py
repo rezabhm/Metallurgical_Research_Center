@@ -152,8 +152,15 @@ class ReserveAPIView(GenericAPIView):
         reserve_id = request.query_params.get('reserve-id')
 
         if not reserve_id:
-            return JsonResponse({'message': 'reserve-id is required in links query params'},
-                                 status=status.HTTP_400_BAD_REQUEST)
+            is_admin = request.user.role == 'admin'
+            if is_admin:
+
+                reserve_list = ServiceReserve.objects()
+            else:
+                reserve_list = ServiceReserve.objects(user=request.user.phone_number)
+
+            reserver_serializer = self.serializer_class(reserve_list, many=True)
+            return JsonResponse(reserver_serializer.data, status=status.HTTP_200_OK)
 
         reserve_obj = ServiceReserve.objects(id=reserve_id).first()
         if not reserve_obj:
