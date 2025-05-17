@@ -160,7 +160,7 @@ class ReserveAPIView(GenericAPIView):
                 reserve_list = ServiceReserve.objects(user=request.user.phone_number)
 
             reserver_serializer = self.serializer_class(reserve_list, many=True)
-            return JsonResponse(reserver_serializer.data, status=status.HTTP_200_OK)
+            return JsonResponse({'data':reserver_serializer.data}, status=status.HTTP_200_OK)
 
         reserve_obj = ServiceReserve.objects(id=reserve_id).first()
         if not reserve_obj:
