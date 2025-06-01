@@ -1,6 +1,7 @@
 import os
 import random
 
+from bson import ObjectId
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -33,6 +34,8 @@ class CategorySerializers(serializers.Serializer):
         return category
 
     def update(self, instance, validated_data):
+        print(validated_data)
+        print(instance)
         instance.category_name = validated_data.get('category_name', instance.category_name)
         instance.slug = validated_data.get('slug', instance.slug)
         instance.save()
@@ -100,6 +103,7 @@ class BlogSerializers(serializers.Serializer):
 
             validated_data['cover_image'] = file_path
 
+
         instance.title = validated_data.get('title', instance.title)
         instance.cover_image = validated_data.get('cover_image', instance.cover_image)
         instance.category_list = validated_data.get('category_list', instance.category_list)
@@ -116,7 +120,7 @@ class BlogContentSerializers(serializers.Serializer):
     content = serializers.CharField()
     class_name = serializers.CharField()
     is_multiline = serializers.BooleanField()
-    blog = serializers.UUIDField()
+    blog = serializers.PrimaryKeyRelatedField(queryset=Blog.objects.all())
 
     def create(self, validated_data):
         x = BlogContent(**validated_data)
@@ -132,12 +136,20 @@ class BlogContentSerializers(serializers.Serializer):
         instance.save()
         return instance
 
+    def to_representation(self, instance):
+        # تبدیل ObjectId به رشته در خروجی
+        data = super().to_representation(instance)
+        if isinstance(data.get('id'), ObjectId):
+            data['id'] = str(data['id'])
+        if isinstance(data.get('blog'), ObjectId):
+            data['blog'] = str(data['blog'])
+        return data
 
 class BlogImageSerializers(serializers.Serializer):
 
     id = serializers.UUIDField(read_only=True)
     image = serializers.ImageField()
-    blog = serializers.UUIDField()
+    blog = serializers.PrimaryKeyRelatedField(queryset=Blog.objects.all())
 
     def create(self, validated_data):
         # گرفتن تصویر از validated_data
@@ -161,3 +173,12 @@ class BlogImageSerializers(serializers.Serializer):
         instance.blog = validated_data.get('blog', instance.blog)
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        # تبدیل ObjectId به رشته در خروجی
+        data = super().to_representation(instance)
+        if isinstance(data.get('id'), ObjectId):
+            data['id'] = str(data['id'])
+        if isinstance(data.get('blog'), ObjectId):
+            data['blog'] = str(data['blog'])
+        return data

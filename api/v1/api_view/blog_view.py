@@ -109,6 +109,7 @@ from rest_framework import mixins
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.exceptions import NotFound
 
 from apps.blog.document import *
 from apps.blog.serializers import *
@@ -188,8 +189,6 @@ class CategoryAPIView(
 
     def get_queryset(self):
         return Category.objects()
-
-
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
@@ -381,6 +380,7 @@ class BlogImageAPiView(
             403: openapi.Response('شما دسترسی به این عملیات ندارید.')
         }
     ))
+
 class BlogContentAPIView(
     GenericViewSet,
     mixins.ListModelMixin,
@@ -396,10 +396,17 @@ class BlogContentAPIView(
     authentication_classes = [HTTPOnlyCookieJWTAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = BlogContentSerializers
-    queryset = BlogContent.objects()
 
     def get_queryset(self):
         return BlogContent.objects()
+
+    def get_object(self):
+        # pk را از url گرفته و object را دستی بازیابی می‌کنیم
+        pk = self.kwargs.get('pk')
+        try:
+            return BlogContent.objects.get(pk=pk)
+        except BlogContent.DoesNotExist:
+            raise NotFound("محتوای مورد نظر یافت نشد.")
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
