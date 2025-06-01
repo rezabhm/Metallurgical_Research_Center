@@ -130,3 +130,8 @@ verify_limit_time = 1
 GRAPHENE = {
     "SCHEMA": "apps.blog.graphQL_schema.schema"  # مسیر فایل schema.py
 }
+
+MONGO = {
+    'db': 'configs',
+    'host': 'mongodb://localhost:27017/configs'
+}
