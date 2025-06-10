@@ -1,5 +1,6 @@
 import os
 import random
+import json
 
 from bson import ObjectId
 from django.conf import settings
@@ -47,18 +48,20 @@ class BlogSerializers(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
     title = serializers.CharField()
     cover_image = serializers.ImageField()
+    # cover_image = serializers.CharField()
     category_list = serializers.ListField()
     tags = serializers.ListField()
     slug = serializers.CharField()
 
     def to_representation(self, instance):
+        cover_image = instance.cover_image
         representation = super().to_representation(instance)
         # ✅ تبدیل category_list از DBRef به id یا نام
         if hasattr(instance, 'category_list') and instance.category_list:
-            representation['category_list'] = [
-                str(category.id) for category in instance.category_list
-            ]
 
+            representation['category_list'] = [
+               str(category.id) for category in instance.category_list
+            ]
         blog_images = BlogImage.objects(blog=representation['id'])
         blog_images_serializers = BlogImageSerializers(data=blog_images, many=True)
         blog_images_serializers.is_valid()
@@ -70,6 +73,7 @@ class BlogSerializers(serializers.Serializer):
         blog_contents_serializers.is_valid()
 
         representation['blog-content'] = blog_contents_serializers.data
+        representation['cover_image'] = cover_image
 
         return representation
 
@@ -97,16 +101,16 @@ class BlogSerializers(serializers.Serializer):
 
             # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
             file_name = f'cover_image/{str(random.randint(0,100000))}-{os.path.basename(image.name)}'
-
-            # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
+# ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
             file_path = default_storage.save(file_name, ContentFile(image.read()))
 
             validated_data['cover_image'] = file_path
 
-
+        category_list = validated_data['category_list'][0].split(',')
+        category_list = [Category.objects(id=cat)[0] for cat in category_list]
         instance.title = validated_data.get('title', instance.title)
         instance.cover_image = validated_data.get('cover_image', instance.cover_image)
-        instance.category_list = validated_data.get('category_list', instance.category_list)
+        instance.category_list = category_list
         instance.tags = validated_data.get('tags', instance.tags)
         instance.slug = validated_data.get('slug', instance.slug)
         instance.save()
