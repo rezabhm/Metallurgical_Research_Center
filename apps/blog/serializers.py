@@ -73,7 +73,7 @@ class BlogSerializers(serializers.Serializer):
         blog_contents_serializers.is_valid()
 
         representation['blog-content'] = blog_contents_serializers.data
-        representation['cover_image'] = cover_image
+        representation['cover_image'] = f'http://localhost:8000/{cover_image}'
 
         return representation
 
