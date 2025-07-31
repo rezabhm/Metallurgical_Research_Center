@@ -9,6 +9,7 @@ class ServiceReserveSerializers(serializers.Serializer):
     stage = serializers.IntegerField()
     is_canceled = serializers.BooleanField()
     user = serializers.CharField()
+    is_package = serializers.BooleanField()
 
     # stage 1
     reserve_from = serializers.CharField()
@@ -29,6 +30,7 @@ class ServiceReserveSerializers(serializers.Serializer):
 
     # stage 5
     is_finished = serializers.BooleanField()
+    report_file = serializers.CharField()
 
     def update(self, instance, validated_data):
 

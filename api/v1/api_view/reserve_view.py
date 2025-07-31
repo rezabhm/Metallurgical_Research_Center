@@ -195,7 +195,7 @@ class ReserveAPIView(GenericAPIView):
         if not user:
             return JsonResponse({'message': 'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        reserve_obj = ServiceReserve(user=user.phone_number)
+        reserve_obj = ServiceReserve(user=user.phone_number, is_package=request.data.get('is_package'))
         reserve_obj.save()
 
         reserve_serializer = self.serializer_class(reserve_obj)

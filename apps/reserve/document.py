@@ -28,6 +28,7 @@ class ServiceReserve(mongo.Document):
     is_canceled = mongo.BooleanField(default=False)
     user = mongo.StringField(default='')
     admin_description = mongo.StringField(default='')
+    is_package = mongo.BooleanField(default=False)
 
     # stage 1
     reserve_from = mongo.StringField(default='')
@@ -47,6 +48,7 @@ class ServiceReserve(mongo.Document):
 
     # stage 5
     is_finished = mongo.BooleanField(default=False)
+    report_file = mongo.StringField(required=False, default='')
 
     meta = {'collection': 'ServiceReserve'}
 
@@ -136,6 +138,19 @@ class ServiceReserve(mongo.Document):
 
     def next_stage_5(self, validated_data):
         self.is_finished = validated_data['is_finished']
+
+        payment_image = validated_data['report_file']
+
+        # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
+        file_name = f'report_file/{self.id}_{os.path.basename(payment_image.name)}'
+
+        # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
+        file_path = default_storage.save(file_name, ContentFile(payment_image.read()))
+
+        # ذخیره مسیر فایل در فیلد payment_image
+        self.report_file = file_path
+
+        validated_data['report_file'] = file_path
 
         self.save()
         self.next_stage()
