@@ -8,6 +8,7 @@ class Service(models.Model):
     description = models.TextField()
     price = models.IntegerField(default=0)
     cover_image = models.ImageField(upload_to='service/cover/')
+    is_package = models.BooleanField(default=False)
 
     def __str__(self):
         return self.service_name
