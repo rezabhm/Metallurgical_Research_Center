@@ -204,6 +204,7 @@ class OTPSendCodeAPIView(GenericAPIView):
         send_password_code_sms(user.phone_number, user.otp_code)
 
         return JsonResponse(data={'message': 'کد با موفقیت ارسال شد'}, status=status.HTTP_200_OK)
+        # return JsonResponse(data={'message': 'کد با موفقیت ارسال شد', 'code':user.otp_code}, status=status.HTTP_200_OK)
 
 
 class OTPVerifyCodeAPIView(GenericAPIView):

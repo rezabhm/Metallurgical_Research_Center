@@ -465,7 +465,7 @@ class BlogReadAPiView(
     """
     این کلاس برای مشاهده مطالب بلاگ استفاده می‌شود. دسترسی به این API برای همه کاربران آزاد است.
     """
-    authentication_classes = [HTTPOnlyCookieJWTAuthentication]
+    authentication_classes = []
     permission_classes = [AllowAny]
     serializer_class = BlogSerializers
     queryset = Blog.objects()

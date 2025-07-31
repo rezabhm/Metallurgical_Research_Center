@@ -21,7 +21,7 @@ class CategorySerializers(serializers.Serializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        blog_list = Blog.objects(category_list__contain=[representation['id']])
+        blog_list = Blog.objects(category_list__in=[instance.id])
         blog_serializers = BlogSerializers(data=blog_list, many=True)
         blog_serializers.is_valid()
 
@@ -89,6 +89,7 @@ class BlogSerializers(serializers.Serializer):
         file_path = default_storage.save(file_name, ContentFile(image.read()))
 
         validated_data['cover_image'] = file_path
+        validated_data['category_list'] = validated_data['category_list'][0].split(',') if len(validated_data['category_list']) > 0 else []
 
         x = Blog(**validated_data)
         x.save()
@@ -148,6 +149,7 @@ class BlogContentSerializers(serializers.Serializer):
         if isinstance(data.get('blog'), ObjectId):
             data['blog'] = str(data['blog'])
         return data
+
 
 class BlogImageSerializers(serializers.Serializer):
 
