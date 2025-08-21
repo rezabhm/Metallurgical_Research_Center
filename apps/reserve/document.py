@@ -12,7 +12,7 @@ def check_validated_data(stage, validated_data):
         '2': ['is_reservation_time_verified', 'admin_description', 'reserve_duration', 'total_price'],
         '3': ['payment_image'],
         '4': ['is_payment_verified'],
-        '5': ['is_finished'],
+        '5': ['is_finished','report_file'],
 
     }
 
@@ -110,7 +110,7 @@ class ServiceReserve(mongo.Document):
         payment_image = validated_data['payment_image']
 
         # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
-        file_name = f'payment_images/{self.id}_{os.path.basename(payment_image.name)}'
+        file_name = f'payment_images/{self.id}/{os.path.basename(payment_image.name)}'
 
         # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
         file_path = default_storage.save(file_name, ContentFile(payment_image.read()))
@@ -136,13 +136,15 @@ class ServiceReserve(mongo.Document):
 
         return True, validated_data
 
+
     def next_stage_5(self, validated_data):
-        self.is_finished = validated_data['is_finished']
+        print(validated_data)
+        self.is_finished = validated_data['is_finished'][0] == 'true'
 
         payment_image = validated_data['report_file']
 
         # ایجاد نام فایل جدید برای عکس (می‌توانید نام فایل را به دلخواه تغییر دهید)
-        file_name = f'report_file/{self.id}_{os.path.basename(payment_image.name)}'
+        file_name = f'report_file/{self.id}/{os.path.basename(payment_image.name)}'
 
         # ذخیره عکس در دایرکتوری مناسب (در اینجا از default_storage استفاده می‌کنیم)
         file_path = default_storage.save(file_name, ContentFile(payment_image.read()))
